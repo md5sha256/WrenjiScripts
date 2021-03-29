@@ -87,8 +87,10 @@ namespace Wrenji.Player
 
         void Settings()
         {
-            speed = 10;
-
+            speed = 300;
+            jump = false;
+            crouch = false;
+            block = false;
         }
 
         //Finished

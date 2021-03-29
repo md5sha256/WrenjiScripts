@@ -31,4 +31,5 @@ ehthumbs.db
 [Bb]uild
 sysinfo.txt
 *.stackdump
-
+*.controller
+*.controller.meta
