@@ -16,9 +16,9 @@ public class LegacyController2D : MonoBehaviour
     const float k_GroundedRadius = 0.1f; // Radius of the overlap circle to determine if grounded
     private bool m_Grounded;            // Whether or not the player is grounded.
     const float k_CeilingRadius = 0.1f; // Radius of the overlap circle to determine if the player can stand up
-    private Rigidbody m_Rigidbody;
+    private Rigidbody2D m_Rigidbody;
     private bool m_FacingRight = true;  // For determining which way the player is currently facing.
-    private Vector3 m_Velocity = Vector3.zero;
+    private Vector2 m_Velocity = Vector2.zero;
 
     [Header("Events")]
     [Space]
@@ -38,7 +38,7 @@ public class LegacyController2D : MonoBehaviour
 
     private void Awake()
     {
-        m_Rigidbody = GetComponent<Rigidbody>();
+        m_Rigidbody = GetComponent<Rigidbody2D>();
 
 
         if (OnLandEvent == null)
@@ -56,12 +56,12 @@ public class LegacyController2D : MonoBehaviour
 
         //i added this to suit 3D
 
-        m_Grounded = Physics.CheckSphere(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround);
+        m_Grounded = Physics2D.OverlapCircle(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround);
+
 
          FallCorrection();
 
-   
-
+  
 
     }
 
@@ -70,15 +70,15 @@ public class LegacyController2D : MonoBehaviour
 
         if (m_Rigidbody.velocity.y < 0)
         {
-            m_Rigidbody.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
+            m_Rigidbody.velocity += Vector2.up * Physics.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
 
         }
 
     }
 
-    public void Move(Vector3 move, bool crouch, bool jump)
+    public void Move(Vector2 move, bool crouch, bool jump)
     {
-
+        Debug.Log(m_Grounded);
 
         // If crouching, check to see if the character can stand up
         if (!crouch)
@@ -124,10 +124,10 @@ public class LegacyController2D : MonoBehaviour
             }
 
             // Move the character by finding the target velocity
-            Vector3 targetVelocity = move;
+            Vector2 targetVelocity = move;
             // And then smoothing it out and applying it to the character
 
-            m_Rigidbody.velocity = Vector3.SmoothDamp(m_Rigidbody.velocity, targetVelocity, ref m_Velocity, m_MovementSmoothing);
+            m_Rigidbody.velocity = Vector2.SmoothDamp(m_Rigidbody.velocity, targetVelocity, ref m_Velocity, m_MovementSmoothing);
 
 
 
@@ -148,15 +148,8 @@ public class LegacyController2D : MonoBehaviour
 
          //m_Animator.SetBool("Jump", true);
             Debug.Log("triggered");
-
- 
-            m_Rigidbody.velocity += Vector3.up * m_JumpSpeed;
-
-
+            m_Rigidbody.velocity += Vector2.up * m_JumpSpeed;
             m_Grounded = false;
-
-
-
       
         }
 
@@ -168,7 +161,7 @@ public class LegacyController2D : MonoBehaviour
         m_FacingRight = !m_FacingRight;
 
         // Multiply the player's x local scale by -1.
-        Vector3 theScale = transform.localScale;
+        Vector2 theScale = transform.localScale;
         theScale.x *= -1;
         transform.localScale = theScale;
     }
